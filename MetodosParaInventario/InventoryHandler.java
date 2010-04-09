@@ -3,7 +3,6 @@ import java.awt.Rectangle;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.neuroph.nnet.learning.BinaryHebbianLearning;
 
 public class InventoryHandler {
 	/**

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="ManipuladoreDaTela"/>
+	<classpathentry kind="src" path="MetodosAuxiliares"/>
+	<classpathentry kind="src" path="ManipuladorDeMouseTeclado"/>
+	<classpathentry excluding="MetodosAbstratos/" kind="src" path="LeitoresDeCharacters"/>
+	<classpathentry kind="src" path="LeitoresAbstratos"/>
+	<classpathentry kind="src" path="naofuncionando"/>
+	<classpathentry kind="src" path="Interfaces"/>
+	<classpathentry kind="src" path="MetodosParaInventario"/>
+	<classpathentry kind="src" path="GerenciadorDeEventos"/>
+	<classpathentry kind="src" path="Scripts"/>
+	<classpathentry kind="src" path="Principal"/>
+	<classpathentry kind="src" path="gui"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
