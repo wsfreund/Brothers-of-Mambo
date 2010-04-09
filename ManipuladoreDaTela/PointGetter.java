@@ -563,95 +563,6 @@ public class PointGetter {
 		int minY = 999999999;
 		int maxX = -1;
 		int maxY = -1;
-		int index = 1;
-		int count = 1;
-		while (count < possiblePoints.size()) { // TODO usar o mesmo no
-			// método acima!
-			System.out.println("Count: " + count);
-			System.out.println(possiblePoints.size());
-			index = count;
-			for (int i = index; i < possiblePoints.size(); i++) {
-				count++;
-				Point actual = possiblePoints.get(i - 1);
-				if (actual.x < minX)
-					minX = actual.x;
-				if (actual.x > maxX)
-					maxX = actual.x;
-				if (actual.y < minY)
-					minY = actual.y;
-				if (actual.y > maxY)
-					maxY = actual.y;
-
-				if (i == possiblePoints.size()) {
-					int thisDelta = (int) possiblePoints.get(i)
-							.distance(actual);
-					if (thisDelta > maxDist) {
-						System.out.println("Adicionando pontos: " + index);
-						pointsRec.add(new Rectangle(minX, minY, maxX - minX,
-								maxY - minY));
-						minX = 999999999;
-						minY = 999999999;
-						maxX = -1;
-						maxY = -1;
-					}
-					actual = possiblePoints.get(i);
-					if (actual.x < minX)
-						minX = actual.x;
-					if (actual.x > maxX)
-						maxX = actual.x;
-					if (actual.y < minY)
-						minY = actual.y;
-					if (actual.y > maxY)
-						maxY = actual.y;
-					thisDelta = (int) possiblePoints.get(i).distance(actual);
-					if (thisDelta > maxDist) {
-						System.out.println("Adicionando pontos: " + index);
-						pointsRec.add(new Rectangle(minX, minY, maxX - minX,
-								maxY - minY));
-						minX = 999999999;
-						minY = 999999999;
-						maxX = -1;
-						maxY = -1;
-					}
-
-				}
-				int thisDelta = (int) possiblePoints.get(i).distance(actual);
-				if (thisDelta > maxDist) {
-					System.out.println("Adicionando pontos: " + index);
-					pointsRec.add(new Rectangle(minX, minY, maxX - minX, maxY
-							- minY));
-					minX = 999999999;
-					minY = 999999999;
-					maxX = -1;
-					maxY = -1;
-					break;
-				}
-
-			}
-		}
-		return pointsRec;
-	}
-
-	static public ArrayList<Point> getAllPoints(Rectangle searchArea,
-			Color col, int maxDist, int filterSize, int minSize,
-			boolean simpleDelta) {
-		ArrayList<Point> possiblePoints;
-		possiblePoints = PixelHandler.filterGetAreaColorPoints(searchArea, col,
-				filterSize, simpleDelta);
-		ArrayList<Point> points = new ArrayList<Point>();
-
-		if (possiblePoints.isEmpty() || possiblePoints.size() < minSize) {
-			return null;
-		}
-		if(possiblePoints.size() == 1) {
-			points.add(possiblePoints.get(0));
-			return points;
-		}
-		possiblePoints = sortByClosest(possiblePoints);
-		int minX = 999999999;
-		int minY = 999999999;
-		int maxX = -1;
-		int maxY = -1;
 		int index = 0;
 		int count = 0;
 		while (count < possiblePoints.size()) { // TODO usar o mesmo no
@@ -660,7 +571,7 @@ public class PointGetter {
 			for (int i = index; i < possiblePoints.size(); i++) {
 
 				count++;
-				//System.out.println(count);
+				// System.out.println(count);
 				Point actual = possiblePoints.get(i);
 				if (actual.x < minX)
 					minX = actual.x;
@@ -679,7 +590,70 @@ public class PointGetter {
 					thisDelta = 999999999;
 				}
 				if (thisDelta > maxDist || i == possiblePoints.size()) {
-					//System.out.println("I - INDEX: " + (i - index));
+					// System.out.println("I - INDEX: " + (i - index));
+					if (i - index >= minSize) {
+						Rectangle rec = new Rectangle(minX, minY, maxX-minX,maxY-minY);
+						pointsRec.add(rec);
+						minX = 999999999;
+						minY = 999999999;
+						maxX = -1;
+						maxY = -1;
+						break;
+					}
+				}
+			}
+		}
+		return pointsRec;
+	}
+
+	static public ArrayList<Point> getAllPoints(Rectangle searchArea,
+			Color col, int maxDist, int filterSize, int minSize,
+			boolean simpleDelta) {
+		ArrayList<Point> possiblePoints;
+		possiblePoints = PixelHandler.filterGetAreaColorPoints(searchArea, col,
+				filterSize, simpleDelta);
+		ArrayList<Point> points = new ArrayList<Point>();
+
+		if (possiblePoints.isEmpty() || possiblePoints.size() < minSize) {
+			return null;
+		}
+		if (possiblePoints.size() == 1) {
+			points.add(possiblePoints.get(0));
+			return points;
+		}
+		possiblePoints = sortByClosest(possiblePoints);
+		int minX = 999999999;
+		int minY = 999999999;
+		int maxX = -1;
+		int maxY = -1;
+		int index = 0;
+		int count = 0;
+		while (count < possiblePoints.size()) { // TODO usar o mesmo no
+			// método acima!
+			index = count;
+			for (int i = index; i < possiblePoints.size(); i++) {
+
+				count++;
+				// System.out.println(count);
+				Point actual = possiblePoints.get(i);
+				if (actual.x < minX)
+					minX = actual.x;
+				if (actual.x > maxX)
+					maxX = actual.x;
+				if (actual.y < minY)
+					minY = actual.y;
+				if (actual.y > maxY)
+					maxY = actual.y;
+
+				int thisDelta;
+				if (i < possiblePoints.size() - 1) {
+					thisDelta = (int) possiblePoints.get(i + 1)
+							.distance(actual);
+				} else {
+					thisDelta = 999999999;
+				}
+				if (thisDelta > maxDist || i == possiblePoints.size()) {
+					// System.out.println("I - INDEX: " + (i - index));
 					if (i - index >= minSize) {
 						Point p = new Point(minX + (maxX - minX) / 2, minY
 								+ (maxY - minY) / 2);
@@ -743,5 +717,77 @@ public class PointGetter {
 		}
 
 		return new Rectangle(minX, minY, maxX - minX, maxY - minY);
+	}
+
+	/**
+	 * Este método procura por duas linhas verticais paralelas de uma ou mais
+	 * cores.
+	 * 
+	 * @param areaToSearch
+	 *            - a área para procurar.
+	 * @param lineColor
+	 *            - a cor da linha a ser procurada.
+	 * @param fiterSizer
+	 *            - o tamanho do filtro, mais cores semelhantes serão
+	 *            consideradas. Se 0, só a cor eespecificada será considerada.
+	 * @param simpleDelta
+	 *            - se o método de comparação deve ser simples(true) ou
+	 *            vetorial.
+	 * @param minSize
+	 *            - o tamanho minimo que as linhas devem ter.
+	 * @param maxSize
+	 *            - o tamanho máximo que as linhas devem ter.
+	 * @param maxDistBtw
+	 *            - a distancia máxima ente as duas linhas.
+	 * @param minDistBtw
+	 *            - a distancia minima entre as duas linhas.
+	 * 
+	 * 
+	 * @return Retorna um retangulo que espressa onde a altura é a altura das
+	 *         linhas, o y é onde elas começam, o x é a posição da linha da
+	 *         esquerda e a largura a distancia entre elas. Ou nulo se as
+	 *         epecificações não atenderem.
+	 */
+	public static ArrayList<Rectangle> getParLines(Rectangle areaToSearch,
+			Color lineColor, int filterSize, boolean simpleDelta, int minSize,
+			int maxSize, int maxDistBtw, int minDistBtw) {
+		ArrayList<Rectangle> parLines = new ArrayList<Rectangle>();
+		ArrayList<Point[]> p = PixelHandler.getVerticalLine(areaToSearch,
+				lineColor, filterSize, simpleDelta, minSize, maxSize);
+		if (p == null) {
+			RuneMethods.log("Não foi encontrada linha!");
+			return null;
+		}
+		if (p.size() == 1) {
+			RuneMethods.log("Só foi encontrado 1 linha!");
+			return null;
+		}
+		RuneMethods.log("Foram encontradas: " + p.size());
+		//Método ruim, ele não compara todas as linhas com todas as linhas...Péssimo.
+		for (int i = 0; i < p.size() -1; i++) {
+			RuneMethods.log("Verificando linhas");
+			Point tpLeft = p.get(i)[0];
+			Point tpRight = p.get(i + 1)[0];
+			Point botLeft = p.get(i)[1];
+			Point botRight = p.get(i + 1)[1];
+			if (tpLeft.y == tpRight.y && botLeft.y == botLeft.y
+					&& tpLeft.x == botLeft.x && tpRight.x == botRight.x) {
+				RuneMethods.log("São iguais, verificando outros quitérios...");
+				Rectangle temp = new Rectangle(tpLeft.x, tpLeft.y, tpRight.x
+						- tpLeft.x, botLeft.y - tpLeft.y);
+				RuneMethods.log("Widht: " + temp.width + " Height: " + temp.height);
+				if (Math.abs(temp.width) <= maxDistBtw && Math.abs(temp.width) >= minDistBtw) {
+					parLines.add(temp);
+					RuneMethods.log("Linhas verificadas e add");
+				}
+				else{
+					RuneMethods.log("Não atenderam ao quitério...");
+				}
+			}
+		}
+		if (parLines.isEmpty())
+			return null;
+		return parLines;
+
 	}
 }

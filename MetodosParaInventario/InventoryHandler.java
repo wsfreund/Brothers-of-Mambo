@@ -3,16 +3,21 @@ import java.awt.Rectangle;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.neuroph.nnet.learning.BinaryHebbianLearning;
+
 public class InventoryHandler {
 	/**
 	 * Classe estática, responsavel por "pegar" o inventorio, de modo a poder
 	 * trabalhar com ele.
 	 */
+	private static InventoryCodDecod codDecod = new InventoryCodDecod(new File(
+	"Codes.txt"));
+	
 	private InventoryHandler() {
+		 
 	}
 
-	private static InventoryCodDecod codDecod = new InventoryCodDecod(new File(
-			"C:\\Codes.txt"));
+	
 
 	/**
 	 * Retorna uma lista contendo os Slots do inventorio, os slots terão o seu
@@ -23,7 +28,7 @@ public class InventoryHandler {
 		ArrayList<Slot> slotList = new ArrayList<Slot>();
 		for (int i = 0; i < slotRectangle.size(); i++) {
 			Rectangle actual = slotRectangle.get(i);
-			String codec = InventoryCodec.getBinCode(PixelHandler
+			String codec = BinaryItemGenerator.getBinCode(PixelHandler
 					.printScreen(actual));
 			String name = codDecod.deCodec(codec);
 			if (name.equals("-1")) {
@@ -48,10 +53,12 @@ public class InventoryHandler {
 		if (index > 27)
 			return null;
 		Rectangle actual = ScreenGetter.getSlotList().get(index);
-		String codec = InventoryCodec.getBinCode(PixelHandler
+		String codec = BinaryItemGenerator.getBinCode(PixelHandler
 				.printScreen(actual));
-		String name = codDecod.deCodec(codec);
+		String name;
+		name = codDecod.deCodec(codec);
 		if (name == "-1") {
+			RuneMethods.logWindow(name);
 			return new Slot(actual, codec);
 		} else {
 			return new Slot(actual, codec, name);
@@ -75,8 +82,9 @@ public class InventoryHandler {
 
 	// TODO fazer este método.
 	public static void generateNamesForUnkowns() {
-		System.out.println ("Gerando nomes para os desconhecidos! ----- >>");
+		RuneMethods.log("Gerando nomes para os desconhecidos! ----- >>");
 		for (int i = 0; i < 28; i++) {
+			OptionTableManager.closeOptionTableIfOpen();
 			//System.out.println ("Inventário (" + i + ")" + " : ");
 			Slot temp = getInventory(i);
 			//System.out.println ("Binário (" + i + ")" + temp.binCode);
@@ -87,8 +95,8 @@ public class InventoryHandler {
 			Rectangle slotPos = temp.squareSlotRec;
 			Point p = new Point(slotPos.x + Meth.intRandom(5, slotPos.width),slotPos.y + Meth.intRandom(5, slotPos.height -5));
 			String name = OptionTableManager.getName(p);
-			System.out.println ("Novo Nome (" + i + ")" + name);
 			if(name!="-1") {
+			RuneMethods.log ("Gerando codec para: " + name);
 			codDecod.addCodec(temp.binCode, name);
 			}
 			

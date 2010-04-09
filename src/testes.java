@@ -1,4 +1,5 @@
 import java.awt.AWTException;
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
@@ -20,6 +21,8 @@ public class testes {
 		System.out.println(rob.getPixelColor(400, 300));
 		BufferedImage im = PixelHandler.printScreen();
 		ScreenGetter.set();
+		CheckCombateEvent e = new CheckCombateEvent();
+		
 		ArrayList<Rectangle> recs = new ArrayList<Rectangle>();
 		recs.add(ScreenGetter.getMensageBoxLine());
 		recs.add(ScreenGetter.getPlayScrArea());
@@ -36,7 +39,13 @@ public class testes {
 		recs.add(ScreenGetter.getNearPlayer());
 		recs.add(ScreenGetter.getJavaAppArea());
 		recs.add(OptionTableManager.getLootRectangle());
-		recs.addAll(OptionTableManager.getRectanglesLootLine());
+		//recs.addAll(OptionTableManager.getRectanglesLootLine());
+		ArrayList<Rectangle> dmgs = PointGetter.getPointsRectangle(ScreenGetter.getNearPlayer(),Color.WHITE, 9, 0, 0, true);
+		for(int i =0; i<dmgs.size(); i++) {
+			System.out.println(dmgs.size());
+			System.out.println(dmgs.get(i));
+		}
+		recs.addAll(dmgs);
 		
 		
 		OptionTableManager.getListOfOptions();

@@ -9,7 +9,7 @@ public class ClipStringReader extends RunescapeStringReader {
 
 	@Override
 	protected Color[] getColors() {
-		return new Color[] { Color.BLACK, Color.BLUE };
+		return new Color[] { Color.BLACK, Color.BLUE, new Color(128,0,0) };
 	}
 
 	@Override

@@ -62,16 +62,16 @@ import java.io.Writer;
 		  static public void setContents(File aFile, String aContents)
 		                                 throws FileNotFoundException, IOException {
 		    if (aFile == null) {
-		      throw new IllegalArgumentException("File should not be null.");
+		      throw new IllegalArgumentException("Codec File não pode ser nulo.");
 		    }
 		    if (!aFile.exists()) {
-		      throw new FileNotFoundException ("File does not exist: " + aFile);
+		      throw new FileNotFoundException ("Codec File não existe: " + aFile);
 		    }
 		    if (!aFile.isFile()) {
-		      throw new IllegalArgumentException("Should not be a directory: " + aFile);
+		      throw new IllegalArgumentException("Codec File, camminho não é um arquivo" + aFile);
 		    }
 		    if (!aFile.canWrite()) {
-		      throw new IllegalArgumentException("File cannot be written: " + aFile);
+		      throw new IllegalArgumentException("Codec não pode ser escrito: " + aFile);
 		    }
 
 		    //use buffering

@@ -19,37 +19,45 @@ public class InventoryCodDecod {
 
 	/**
 	 * Entra com um código binário gerado na identificação de um item do inv e
-	 * devolve sua identificação.
+	 * devolve sua identificação. Este método lê o "código de barras".
 	 * 
 	 * @param binCode
 	 *            - o código em binário gerado pelo método inventório.
-	 * @return - o "nome" do  respectivo códico ou -1 se não foi achado.
+	 * @return - o "nome" do respectivo códico ou -1 se não foi achado.
 	 */
 	public String deCodec(String binCode) {
-		//System.out.println("Content : " + content);
+		// System.out.println("Content : " + content);
 		int index = content.indexOf(binCode, 0);
 		if (index == -1)
 			return "-1";
 		int start = content.indexOf("*", index);
-		//System.out.println(start);
-		int end = content.indexOf("*", start+1);
-		System.out.println(end);
-		String name = content.substring(start+1, end);
-		//System.out.println("Achei o nome em deCodec: " + name);
+		//RuneMethods.logWindow("Index start "+start);
+		int end = content.indexOf("*", start + 1);
+		//RuneMethods.logWindow("Index end "+end);
+		String name = content.substring(start + 1, end);
+		// System.out.println("Achei o nome em deCodec: " + name);
+		//RuneMethods.logWindow(name);
 		return name;
 	}
-	
+
+	/**
+	 * Adiciona o binário e seu respectiovo nome ao arquivo indicado no
+	 * contrutor e atualiza-o em tempo real. Não é necessário recomeçar o
+	 * programa para checar que funcione.
+	 * 
+	 * @param binCode - o código binário do item.
+	 * @param name - seu nome.
+	 */
 	public void addCodec(String binCode, String name) {
-		content = content + " " + binCode + "*" + name + "*";
+		String newline = System.getProperty("line.separator");
+		content = content + " " + binCode + "*" + name + "* " + newline;
 		try {
 			ReadWriteTextFile.setContents(baseFile, content);
 		} catch (FileNotFoundException e) {
-			System.out.println("Problema na execução: O file não foi achado, causa" + e.getCause());
-			e.printStackTrace();
+			RuneMethods.log(e);
 		} catch (IOException e) {
-			System.out.println("Problema na execução:IOExecpiot, causa" + e.getCause());
-			e.printStackTrace();
+			RuneMethods.log(e);
 		}
 	}
-	
+
 }

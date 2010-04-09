@@ -8,7 +8,7 @@ abstract class CombatScript extends Script {
 	protected boolean justTargetted = false;
 	private ArrayList<InterestPoint> intPoints;
 	protected CheckCombateEvent checkCombats = new CheckCombateEvent();
-	private long targettingTime;
+	private long targettingTime = 0;
 	private int dDelay;
 	private int i = 0;
 	private boolean buryBones = false;
@@ -24,8 +24,17 @@ abstract class CombatScript extends Script {
 		dDelay = (int) 1000 / deathCheckFreq();
 		buryBones = toBuryBones();
 		whatToKeep = whatToKeep();
-		lootName = lootName();
-		
+		if (buryBones) {
+			String[] loot = lootName();
+			lootName = new String[loot.length + 1];
+			for (int i = 0; i < loot.length; i++) {
+				lootName[i] = loot[i];
+			}
+			lootName[loot.length] = "Ossos";
+		} else {
+			lootName = lootName();
+		}
+
 	}
 
 	private Point getNpcNearestToMouse() {
@@ -51,23 +60,20 @@ abstract class CombatScript extends Script {
 
 	@Override
 	int loop() {
-		i++;
-		System.out.println("(" + i + ") Minha situação é targetting: "
-				+ targetting);
-		System.out.println("(" + i + ") Minha situação é justTargetted: "
-				+ justTargetted);
+		//
+		// RuneMethods.logWindow("(" + i + ") Minha situação é targetting: "
+		// + targetting);
+		// RuneMethods.logWindow("(" + i + ") Minha situação é justTargetted: "
+		// + justTargetted);
 		if (targetting) {
-			// someoneDied = deathOcourred.lookForDeath();
-			// if (justTargetted) {
 			if (justTargetted) {
-				System.out.println("(" + i + ") cheguei ao justtarget 2");
-				for (int i = 0; i < 100; i++) {
+				// RuneMethods.logWindow("Acabei de clicar num monstro, verificando se em batalha.");
+				for (int i = 0; i < 130; i++) { // Espera no máximo 7 segundos.
 					ArrayList<Point> p = checkCombats.getCombatEventBars();
 					if (p != null && !p.isEmpty()) {
 						for (int j = 0; j < p.size(); j++) {
-							System.out.println("Combat in (" + j
-									+ ") Position: " + p.get(j).x + ","
-									+ p.get(j).y);
+							RuneMethods
+									.logWindow("Há combate(s) na proximidade do jogador, interpretando como combate.");
 							targettingTime = System.currentTimeMillis()
 									+ maxTimeOutCombat();
 							justTargetted = false;
@@ -76,50 +82,52 @@ abstract class CombatScript extends Script {
 					}
 					wait(50);
 				}
-				System.out
-						.println("("
-								+ i
-								+ ") cheguei ao justtarget mas não cheguei a conclusão 3");
+				RuneMethods
+						.logWindow("Não foi achado combate na proximidade do jogador, interpretando como fora de combate.");
 				justTargetted = false;
 				targetting = false;
 				return Meth.intRandom(100, 200);
 
 			}
-			System.out.println("procurando por mortes 4");
-			ArrayList<Point> deathPoints = checkCombats.lookForDeath();
-			if (deathPoints != null && !(deathPoints.size() == 0)) {
-				System.out.println("Morte");
-				System.out.println("(" + i + ") achei " + "( "
-						+ deathPoints.size() + ")" + " mortes 5");
-				targetting = false;
-				wait(Meth.intRandom(2500, 3000)); // TODO tentar modificar isso
-				// por um método que remove
-				// dos pontos possiveis os
-				// pontos onde ocorreram
-				// mortes.
-				if (deathPoints.size() > 1) {
-					System.out
-							.println("Foi encontrado mais de uma morte simultanea, não será recolhido o loot por motivos técnicos");
-					return Meth.intRandom(200, 360);
-				}
-				int deathX = deathPoints.get(0).x;
-				int deathY = deathPoints.get(0).y + 30;
-				System.out
-						.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Morte em: "
-								+ deathX + " " + deathY);
-				ArrayList<Slot> inventory = InventoryHandler.getInventory();
-				boolean looted = loot(new Point(deathX, deathY),lootName);
-				RuneMethods.wait(Meth.intRandom(200, 360));
-				System.out.println("Inventory size is: " + inventory.size()
-						+ " Looted? " + looted);
-				if (inventory.size() == 28
-						|| ((inventory.size() == 27 && looted))) {
-					if (buryBones) {
-						buryBones(inventory);
+			// RuneMethods.logWindow("Em combate, esperando por morte...");
+			Point deathPos = checkForDeathAndPosition();
+			if (deathPos != null) {
+				if (deathPos.x != -1 && deathPos.y != -1) {
+					targetting = false;
+					String strBones = buryBones ? "Pegando ossos" : "";
+					String decom = "O Npc entrou em decomposição.";
+					if (lootName == null) {
+						RuneMethods.logWindow(decom + strBones);
+					} else {
+						RuneMethods.logWindow(decom + strBones
+								+ "Coletando loot");
 					}
-					inventoryFullDrop(inventory, whatToKeep); // TODO fazer
-					// método
+					wait(Meth.intRandom(250, 300)); // TODO tentar modificar
+													// isso
+					// por um método que remove
+					// dos pontos possiveis os
+					// pontos onde ocorreram
+					// mortes.
+					
+					// if (lootName != null) {
+					boolean looted = loot(deathPos, lootName);
+					wait(Meth.intRandom(200, 300));
+					ArrayList<Slot> inventory = InventoryHandler.getInventory();
+					if (inventory.size() == 28
+							|| ((inventory.size() == 27 && looted))) {
+						RuneMethods.wait(Meth.intRandom(300, 1300));
+						RuneMethods.logWindow("Inventorio cheio!");
+						if (buryBones) {
+							RuneMethods.logWindow("Enterrando ossos");
+							buryBones(inventory);
+						}
+
+						inventoryFullDropAllBut(inventory, whatToKeep); // TODO
+						// fazer
+						// método
+					}
 				}
+				// }
 				// para quando o
 				// inventorio
 				// estiver cheio ir
@@ -127,15 +135,23 @@ abstract class CombatScript extends Script {
 				// usando o boolean.
 				return Meth.intRandom(200, 360);
 			} else {
-				System.out.println("Não foram achadas mortes!");
+				boolean toLongWaiting = ((System.currentTimeMillis() - targettingTime) > 20000);
+				if (toLongWaiting) {
+					targetting = false;
+					RuneMethods
+							.log("Esperei tempo demais por uma morte, acho que já morreu...");
+				}
 				return dDelay;
 			}
 		}
 		if (!targetting) {
-			System.out.println("(" + i + ") pronto para atacar 6");
+
 			Point p = getNpcNearestToMouse();
-			if (p == null)
+			if (p == null) {
+				RuneMethods.logWindow("Procurando por Npc...");
 				return Meth.intRandom(400, 800);
+			}
+			// RuneMethods.logWindow("Movendo Mouse rumo NPC...");
 			double dist = p.distance(MouseHandler.getMousePos());
 			if (dist < 4) {
 				MouseHandler.dragMouse(p, 0, false, 0);
@@ -143,11 +159,13 @@ abstract class CombatScript extends Script {
 				targetting = MouseHandler.MouseLeftClick(true);
 				if (targetting) {
 					justTargetted = true;
-					System.out.println("Targetting: " + p);
-					return Meth.intRandom(300, 800);
+					targettingTime = System.currentTimeMillis();
+					return 0;
 
+				} else {
+					RuneMethods.logWindow("Oops, cliquei errado...");
 				}
-				return Meth.intRandom(400, 800);
+				return Meth.intRandom(400, 2200);
 			}
 			// Point pm = MouseHandler.getMousePos();
 			// int dx = (int) ((p.x - pm.x) * Meth.doubleRandom(0.95, 1));
@@ -164,7 +182,6 @@ abstract class CombatScript extends Script {
 				MouseHandler.dragMouse(new Point(p.x, p.y), 0, true, 0);
 			}
 			return 0;
-
 		}
 		return 100;
 	}
@@ -177,9 +194,10 @@ abstract class CombatScript extends Script {
 	abstract boolean toBuryBones();
 
 	private boolean buryBones(ArrayList<Slot> inv) {
+
 		ArrayList<Integer> index = new ArrayList<Integer>();
 		for (int i = 0; i < inv.size(); i++) {
-			if (inv.get(i).name.toLowerCase().contains("bone")) {
+			if (inv.get(i).name.toLowerCase().contains("ossos")) {
 				index.add(i);
 			}
 		}
@@ -193,10 +211,21 @@ abstract class CombatScript extends Script {
 
 	}
 
-	protected boolean inventoryFullDrop(ArrayList<Slot> inventory,
+	/**
+	 * Dropa tudo no chão execeto o informado.
+	 * 
+	 * @param inventory
+	 *            - O inventório do jogador, pode ser obtido pelo método
+	 *            InventoryHandler.getInventory().
+	 * @param whatToKeep
+	 *            - O que deve ser mantido do inventorio.
+	 * @return
+	 */
+	protected boolean inventoryFullDropAllBut(ArrayList<Slot> inventory,
 			String[] whatToKeep) {
 		if (whatToKeep == null)
 			return false;
+		OptionTableManager.closeOptionTableIfOpen();
 		boolean dropedSome = false;
 		for (int i = 0; i < inventory.size(); i++) {
 			String name = (inventory.get(i).name);
@@ -209,7 +238,7 @@ abstract class CombatScript extends Script {
 			}
 			if (toDrop) {
 				dropedSome = true;
-				inventory.get(i).doAction("Drop");
+				inventory.get(i).doAction("Largar");
 				RuneMethods.wait(Meth.intRandom(200, 300));
 			}
 		}
@@ -250,15 +279,72 @@ abstract class CombatScript extends Script {
 	boolean loot(Point dPoint, String[] loot) {
 		if (loot == null)
 			return false;
-		int amount = OptionTableManager.getOptionOnPointContaningOneOrOther(
-				dPoint, loot, true);
-		System.out.println("Amount of loots found: " + amount);
-		if (amount > 1) {
-			loot(dPoint, loot);
+		String[] takeLoot = new String[loot.length];
+		for (int i = 0; i < loot.length; i++) {
+			takeLoot[i] = "Pegar " + loot[i]; // Só funciona para portugues.
 		}
-		if (amount == 1)
+		int amount = OptionTableManager.getOptionOnPointContaningOneOrOther(
+				dPoint, takeLoot, true);
+		if (amount - 1 > 0) {
+			wait(Meth.intRandom(500, 1200));
+			loot(dPoint, loot);
+			RuneMethods.logWindow("Oba achei " + amount
+					+ " itens para serem coletados");
+		}
+		if (amount - 1 == 0) {
+			RuneMethods.logWindow("Terminei de pegar o loot");
 			return true;
+		}
+		RuneMethods.logWindow("Não há loot para ser pego");
 		return false;
+	}
+
+	/**
+	 * Procura por uma morte.
+	 * 
+	 * @return se não houve morte retorna NULL. Se houver mais de uma morte
+	 *         simultânea, devolve um Ponto conteno(-1,-1).Caso contrário
+	 *         retorna um ponto contendo o lugar mais provavel da morte.
+	 */
+	private Point checkForDeathAndPosition() {
+		ArrayList<Point> deathPoints = checkCombats.lookForDeath();
+		if (deathPoints != null && !(deathPoints.size() == 0)) { // continua se
+																	// não for
+																	// vazio.
+			RuneMethods
+					.logWindow("Um NPC foi morto nas proximidades! Esperando entrar em decomposição...");
+			ArrayList<Point> tempDeathPoints = checkCombats.lookForDeath();
+			if (tempDeathPoints.size() > 1)
+				return new Point(-1, -1);
+			Point initP = tempDeathPoints.get(0);
+			Point finalP = tempDeathPoints.get(0);
+			int x = initP.x;
+			int y = initP.y;
+			int i = 1;
+			while (tempDeathPoints != null && !(tempDeathPoints.size() == 0)) {
+				if (tempDeathPoints.size() > 1)
+					return new Point(-1, -1);
+				finalP = tempDeathPoints.get(0);
+				x+= finalP.x;
+				y+= finalP.y;
+				i++;
+				tempDeathPoints = checkCombats.lookForDeath();
+				wait(100);
+
+			}
+			initP.x = x/i;
+			initP.y = y/i;
+			tempDeathPoints = null;
+			int dx = finalP.x - initP.x;
+			//dx = dx > 3 ? 20 : dx == 0 ? 0 : dx < -3 ? - 20 : 0;
+			dx = (int) Math.round(dx * 1.5);
+			int dy = finalP.y - initP.y;
+			//dy = dy > 3 ? 20 : dy == 0 ? 0 : dy < -3 ? - 20 : 0;
+			dy = (int) Math.round(dy * 1.5);
+			return new Point(finalP.x + dx, finalP.y + dy);
+
+		}
+		return null;
 	}
 
 	/**
@@ -267,6 +353,5 @@ abstract class CombatScript extends Script {
 	 * nomes interessantes.
 	 */
 	abstract protected String[] lootName();
-	
-}
 
+}

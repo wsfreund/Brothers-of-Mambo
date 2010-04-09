@@ -179,6 +179,7 @@ public abstract class RunescapeStringReader {
 		for (int i = 0; i < values.size(); i++) {
 			mensage = mensage + lineValueDecodec(values.get(i));
 		}
+		if(mensage.replace(" ","").isEmpty()) return "";
 		return mensage;
 	}
 

@@ -1,7 +1,10 @@
 import java.awt.Color;
 
 public class InterestPoint {
-
+	
+	/**
+	 * Objeto que representa identifica um ponto de interesse, seja ele uma pedra um monstro, enfim.
+	 */
 	private Color pointColor;
 	private int maxDistBetweenPoints;
 	private int filterSize;

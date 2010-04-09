@@ -157,8 +157,8 @@ public class ScreenGetter {
 	}
 
 	private static Rectangle setNearPlayer() {
-		int width = 100; // Largura sobre 2 na verdade
-		int height = 100; // Altura sobre 2...
+		int width = 130; // Largura sobre 2 na verdade
+		int height = 130; // Altura sobre 2...
 		int dx = 0;
 		int dy = 0;
 		return new Rectangle((int) getPlayScrArea().getCenterX() + dx - width,

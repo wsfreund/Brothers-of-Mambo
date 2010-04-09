@@ -54,7 +54,7 @@ public class CheckCombateEvent {
 	 */
 	public ArrayList<PointDamage> checkForDamage() {
 		//pt.set(Color.WHITE, 9, 0, 0, true);
-		ArrayList<Rectangle> lRec = PointGetter.getPointsRectangle(ScreenGetter.getNearPlayer(),Color.WHITE, 9, 0, 0, true);
+		ArrayList<Rectangle> lRec = PointGetter.getPointsRectangle(ScreenGetter.getNearPlayer(),Color.WHITE, 9, 5, 0, true);
 		ArrayList<PointDamage> pointDamageList = new ArrayList<PointDamage>();
 		if (lRec == null || lRec.isEmpty()) {
 			System.out
@@ -64,11 +64,14 @@ public class CheckCombateEvent {
 
 		for (int i = 0; i < lRec.size(); i++) {
 			Rectangle tempRec = lRec.get(i);
-			dmgR.setLineBeginX(tempRec.x);
-			dmgR.setLineBeginY(tempRec.y);
-			dmgR.setLineWidht(tempRec.width);
-
+			System.out.println("Retangggggggggggggggggulo: " + tempRec);
+			dmgR.setLineBeginX(tempRec.x -3);
+			dmgR.setLineBeginY(tempRec.y -2);
+			dmgR.setLineWidht(tempRec.width + 3);
+			
 			int damage = dmgR.getValue();
+			RuneMethods.log("damage" + damage);
+			
 			if (damage >= 0) {
 				Point position = new Point(tempRec.x
 						+ (int) (tempRec.width / 2), tempRec.y

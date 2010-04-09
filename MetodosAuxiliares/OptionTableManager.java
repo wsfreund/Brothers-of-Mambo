@@ -21,9 +21,7 @@ public class OptionTableManager {
 				.getJavaAppArea(), yLineColor, 1, true, 6, 600);
 		if (p == null)
 			return null;
-		if (p.size() > 4) {
-			System.out.println("Menor do q 4");
-
+		if (p.size() > 4||p.size()==1) {
 			return null;
 		}
 		Point tpLeft = p.get(0)[0];
@@ -32,7 +30,6 @@ public class OptionTableManager {
 		Point botRight = p.get(1)[1];
 		if (tpLeft.y == tpRight.y && botLeft.y == botLeft.y
 				&& tpLeft.x == botLeft.x && tpRight.x == botRight.x) {
-			System.out.println("Cheguei aqui");
 			int deX = 0;
 			int deY = 3;
 			int dWi = 0;
@@ -41,6 +38,19 @@ public class OptionTableManager {
 					- tpLeft.x + dWi, botLeft.y - tpLeft.y + dHe);
 		}
 		return null;
+	}
+
+	/**
+	 * Fecha a lista de opções caso esteja aberta. Caso não esteja aberta não
+	 * faz nada.
+	 * 
+	 * @return - um boolean. Caso True significa que tinha um painel aberto e
+	 *         ele fechou, caso não encontrou nada aberto, devolve false.
+	 */
+	public static boolean closeOptionTableIfOpen() {
+		if (clickOnOption(new String[] {"Cancel" }, true)>0) 
+			return true;
+		return false;
 	}
 
 	// Altura do retangulo = 16;
@@ -123,9 +133,9 @@ public class OptionTableManager {
 	 */
 	public static int getOptionOnPoint(Point position, String[] contaningWords,
 			boolean clickCancel) { // TODO fazer método para String, "OU". E
-									// fazer método para pegar que procura por
-									// mais de um loot sem ter que abrir 2
-									// vezes.
+		// fazer método para pegar que procura por
+		// mais de um loot sem ter que abrir 2
+		// vezes.
 		Point p = position;
 		MouseHandler.dragMouse(p, 0, true, 0);
 		RuneMethods.wait(Meth.intRandom(30, 50));
@@ -142,7 +152,7 @@ public class OptionTableManager {
 			String option = listOfOptions.get(i).option;
 			boolean add = true;
 			for (int temp = 0; temp < contaningWords.length; temp++) {
-				if (!(option.contains(contaningWords[temp]))) {
+				if (!(option.toLowerCase().contains(contaningWords[temp].toLowerCase()))) {
 					add = false;
 					break;
 				}
@@ -203,13 +213,13 @@ public class OptionTableManager {
 	 */
 	public static int getOptionOnPointContaningOneOrOther(Point position,
 			String[] contaningWords, boolean clickCancel) { // TODO fazer método
-															// para String,
-															// "OU". E fazer
-															// método para pegar
-															// que procura por
-															// mais de um loot
-															// sem ter que abrir
-															// 2 vezes.
+		// para String,
+		// "OU". E fazer
+		// método para pegar
+		// que procura por
+		// mais de um loot
+		// sem ter que abrir
+		// 2 vezes.
 		Point p = position;
 		MouseHandler.dragMouse(p, 0, true, 0);
 		RuneMethods.wait(Meth.intRandom(30, 50));
@@ -226,7 +236,7 @@ public class OptionTableManager {
 			String option = listOfOptions.get(i).option;
 			boolean add = false;
 			for (int temp = 0; temp < contaningWords.length; temp++) {
-				if ((option.contains(contaningWords[temp]))) {
+				if ((option.toLowerCase().contains(contaningWords[temp].toLowerCase()))) {
 					add = true;
 					break;
 				}
@@ -366,7 +376,7 @@ public class OptionTableManager {
 			String option = listOfOptions.get(i).option;
 			boolean add = true;
 			for (int temp = 0; temp < contaningWords.length; temp++) {
-				if (!(option.contains(contaningWords[temp]))) {
+				if (!(option.toLowerCase().contains(contaningWords[temp].toLowerCase()))) {
 					add = false;
 					break;
 				}

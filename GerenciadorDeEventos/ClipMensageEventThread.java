@@ -1,43 +1,44 @@
-
-public class ClipMensageEventThread extends Thread{
+public class ClipMensageEventThread extends Thread {
 
 	private ClipMensageListener hisListener;
 	private int freq;
 	private String lastMsg;
 	private ClipStringReader cpRead = new ClipStringReader();
-	
+
 	public ClipMensageEventThread(ClipMensageListener yourListener, int freq) {
+		super();
 		hisListener = yourListener;
 		this.freq = freq;
+		
 	}
-	
-	public void run(){
+
+	public void run() {
 		long time = (long) (1000 / freq);
 		lastMsg = cpRead.getMensage();
 		inform(hisListener, lastMsg);
-		for(;;) {
+		for (;;) {
 			checkNewMensage();
 			try {
 				sleep(time);
 			} catch (InterruptedException e) {
-				//TODO log!
+				// TODO log!
 			}
 		}
-		
+
 	}
-	
-	
-	private boolean checkNewMensage(){
+
+	private boolean checkNewMensage() {
 		String actualMsg = cpRead.getMensage();
-		if (lastMsg!=actualMsg) {
+		if (actualMsg.equals("")) return false;
+		if (!(lastMsg.equals(actualMsg))) {
 			lastMsg = actualMsg;
 			inform(hisListener, actualMsg);
 			return true;
-			
+
 		}
 		return false;
 	}
-	
+
 	private void inform(ClipMensageListener hisListener, String mensage) {
 		hisListener.mensageEventRecived(mensage);
 	}

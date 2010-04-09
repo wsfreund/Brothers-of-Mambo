@@ -148,13 +148,13 @@ public class OptionTableCharReader extends RunescapeStringReader {
 			return "J";
 		if (value == 53908223)
 			return "K";
-		if (value == 5689343)
+		if (value == 113788906) // feito
 			return "L";
 		if (value / 1000 == 225094801) // feito
 			return "M";
 		if (value == 106254243)
 			return "N";
-		if (value == 28347132)
+		if (value == 1236010080) // feito
 			return "O";
 		if (value == 7355106) // feito
 			return "P";

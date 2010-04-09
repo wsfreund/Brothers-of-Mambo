@@ -5,18 +5,34 @@ public abstract class Script extends Thread implements ClipMensageListener {
 	 * Método básico para criação de novas Scripts.
 	 */
 
-	ClipMensageEventThread clip;
+	private boolean stopLoop = false;
+	ClipMensageEventThread clip = new ClipMensageEventThread(this,
+			msgListFreq());
 
 	Script() {
-		LogFrame frameLog = new LogFrame();
-		frameLog.setVisible(true);
-		frameLog.setAlwaysOnTop(true);
 	}
 
+	private static String[] scriptNames = {"MuggerSlayer"};
+	/**
+	 * @return - o nome de todas as Scripts.
+	 */
+	public static String[] getNames() {
+		return scriptNames;
+		}
+	public static void runScript(String scriptName) {
+		ScreenGetter.set();
+		if(scriptName.equals("MuggerSlayer")) {
+			MuggerSlayer muggerSlayer = new MuggerSlayer();
+			muggerSlayer.start();
+		}
+	}
+	
+	
 	/**
 	 * Lida com as mensagens recebidas
 	 */
 	public void mensageEventRecived(String mensage) {
+		System.out.println(mensage);
 		if (toLogMsg())
 			RuneMethods.logFile(mensage);
 		checkMensage(mensage);
@@ -24,10 +40,10 @@ public abstract class Script extends Thread implements ClipMensageListener {
 	}
 
 	public void run() {
-		clip = new ClipMensageEventThread(this, msgListFreq());
+		clip.start();
 		onStart();
 		onFinish();
-		while (loop() >= 0) {
+		while (loop() >= 0 && !stopLoop) {
 			RuneMethods.wait(loop());
 		}
 	}
@@ -39,6 +55,15 @@ public abstract class Script extends Thread implements ClipMensageListener {
 	 * 
 	 */
 	private void checkMensage(String mensage) {
+		RuneMethods.logFile(mensage);
+		if (mensage.toLowerCase().contains(
+				RuneMethods.getPlayerName().toLowerCase())
+				&& mensage.toLowerCase().contains("tchau")) {
+			stopLoop();
+			RuneMethods.log("O jogador se despediu, saindo do Bot...");
+			RuneMethods.closeLog();
+			System.exit(0);
+		}
 	}
 
 	/**
@@ -81,4 +106,7 @@ public abstract class Script extends Thread implements ClipMensageListener {
 	 */
 	abstract int msgListFreq();
 
+	public void stopLoop() {
+		stopLoop = true;
+	}
 }

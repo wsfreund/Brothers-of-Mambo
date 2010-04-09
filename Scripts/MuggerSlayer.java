@@ -7,7 +7,7 @@ public class MuggerSlayer extends CombatScript{
 
 	@Override
 	int deathCheckFreq() {
-		return 8;
+		return 3;
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class MuggerSlayer extends CombatScript{
 
 	@Override
 	void onStart() {
-	}
+			}
 
 	@Override
 	boolean toLogMsg() {
@@ -56,12 +56,12 @@ public class MuggerSlayer extends CombatScript{
 
 	@Override
 	String[] whatToKeep() {
-		return new String[] {"Body Rune", "Bones", "Coins", "Trout"};
+		return null;
 	}
 
 	@Override
 	protected String[] lootName() {
-		return new String[] {"Body Runes","Bones"};
+		return new String[] {"Moedas", "Runas"}; //TODO fazer isso com painel.
 	}
 	
 	
