@@ -178,7 +178,7 @@ public class KeyBoardManager {
 	 * @param whatToType
 	 */
 	static public boolean type(String whatToType) {
-		String temp = whatToType;
+		String temp = whatToType.toLowerCase();
 		boolean allTyped = true;
 		for (int i = 0; i < temp.length(); i++) {
 			String thischar = "" + temp.charAt(i);

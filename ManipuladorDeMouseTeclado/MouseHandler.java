@@ -12,7 +12,6 @@ public class MouseHandler {
 	 * Classe estática contendo métodos uteis para obter informação e posição do
 	 * mouse.
 	 */
-	// TODO esta classe deve ser runnable para portar uma Thread.
 	private MouseHandler() {
 	}
 
